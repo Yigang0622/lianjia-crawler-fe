@@ -1,5 +1,6 @@
 import {DataTypes, Model, Op, Sequelize} from "sequelize";
 import {HouseImageDo, HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
+import mysql2 from "mysql2"
 
 const sequelize =  new Sequelize('lianjia',
     process.env.DB_USER || '',
@@ -7,7 +8,8 @@ const sequelize =  new Sequelize('lianjia',
     {
         host: process.env.DB_HOST,
         dialect: 'mysql',
-        port: parseInt(process.env.DB_PORT || '3306', 10)
+        port: parseInt(process.env.DB_PORT || '3306', 10),
+        dialectModule: mysql2
     })
 
 

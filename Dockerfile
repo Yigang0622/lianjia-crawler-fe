@@ -14,8 +14,10 @@ RUN \
   elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
   else echo "Lockfile not found." && exit 1; \
   fi
+#
+#RUN npm install mysql2 --save
+#RUN npm install
 
-RUN npm install mysql2 --save
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
