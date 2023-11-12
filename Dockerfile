@@ -15,7 +15,7 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-
+RUN npm install mysql2 --save
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
@@ -27,10 +27,8 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn build
-
 # If using npm comment out above and use below instead
-# RUN npm run build
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
