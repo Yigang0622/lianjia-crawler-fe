@@ -41,10 +41,10 @@ export class LianjiaSearchBar extends React.Component<any , any> {
                             <Link href={`/housedetail/${x.houseId}`}>
                                 <div>
                                     <Row>
-                                        <Col span={8}>
-                                            <Image src={x.images.length > 0 ? x.images[0].url : ''} alt={''} width={'100%'} referrerPolicy="no-referrer"/>
+                                        <Col span={4}>
+                                            <Image src={x.images.length > 0 ? x.images[0].url : ''} alt={''} width={'100%'} height={'100%'} referrerPolicy="no-referrer" preview={false}/>
                                         </Col>
-                                        <Col span={16}>
+                                        <Col span={20}>
                                             <Space direction={"vertical"}>
                                                 <Typography.Text>{`${x.resblockName} ${x.totalPrice}万 ${x.area}平`}</Typography.Text>
                                                 <Typography.Text type={'secondary'}>{x.title}</Typography.Text>

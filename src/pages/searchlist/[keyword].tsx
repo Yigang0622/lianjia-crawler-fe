@@ -23,7 +23,7 @@ export default function Page({ houseList,keyword } : {houseList: HouseRecordDo[]
     }
 
     return (
-        <div>
+        <Col xs={{span:24, offset:0}} sm={{span:24, offset:0}} md={{span:18, offset:3}} lg={{span:10, offset:7}} xl={{span:8, offset:8}} >
             <Input.Search size="large" placeholder="房源Id/小区名字/房源标题..." onSearch={onSearchClick} enterButton />
             <Typography.Title level={4}>搜索结果:{keyword}({houseList.length}条)</Typography.Title>
             {
@@ -52,9 +52,7 @@ export default function Page({ houseList,keyword } : {houseList: HouseRecordDo[]
 
                     )
                 })
-
             }
-
-        </div>
+        </Col>
     )
 }

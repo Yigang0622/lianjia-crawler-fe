@@ -37,7 +37,7 @@ export default function Home() {
           <Layout style={{backgroundColor:'#FFFFFF'}}>
               <Layout.Content>
 
-                  <Col>
+                  <Col xs={{span:24, offset:0}} sm={{span:24, offset:0}} md={{span:18, offset:3}} lg={{span:10, offset:7}} xl={{span:8, offset:8}} >
                       <Row style={{marginTop: '50%', flex: 1, justifyContent:'center'}}>
                           <Typography.Title>Lianjia Search</Typography.Title>
                       </Row>
