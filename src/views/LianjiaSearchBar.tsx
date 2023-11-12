@@ -10,7 +10,8 @@ export class LianjiaSearchBar extends React.Component<any , any> {
     constructor(props: any) {
         super(props);
         this.state = {
-            searchOptions: []
+            searchOptions: [],
+            loading: false
         }
     }
 
@@ -76,6 +77,12 @@ export class LianjiaSearchBar extends React.Component<any , any> {
        };
 
        const onSearchClick = (value: string) => {
+
+           if (value.length === 0) {
+               return
+           }
+
+           this.setState({loading: true})
            if (this.props.onSearch) {
                this.props.onSearch(value)
            }
@@ -92,7 +99,7 @@ export class LianjiaSearchBar extends React.Component<any , any> {
                size="large"
            >
 
-               <Input.Search size="large" placeholder="房源Id/小区名字/房源标题..." enterButton onSearch={onSearchClick}/>
+               <Input.Search size="large" placeholder="房源Id/小区名字/房源标题..." enterButton onSearch={onSearchClick} loading={this.state.loading}/>
            </AutoComplete>
        )
    }
