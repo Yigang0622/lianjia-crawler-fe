@@ -2,6 +2,8 @@ import {DataTypes, Model, Op, Sequelize} from "sequelize";
 import {HouseImageDo, HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
 import mysql2 from "mysql2"
 
+console.log('initializing sequelize ' + process.env.DB_HOST + ' ' + process.env.DB_PORT)
+
 const sequelize =  new Sequelize('lianjia',
     process.env.DB_USER || '',
     process.env.DB_PASSWORD || '',
