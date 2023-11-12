@@ -4,6 +4,7 @@ import "lodash"
 import { debounce } from "lodash";
 import axios from "axios";
 import {HouseRecordDo} from "@/lianjia-service/typeDef";
+import Link from "next/link";
 export class LianjiaSearchBar extends React.Component<any , any> {
 
     constructor(props: any) {
@@ -33,28 +34,30 @@ export class LianjiaSearchBar extends React.Component<any , any> {
                })
                const houseList:HouseRecordDo[] =  response.data
 
-               console.log(houseList)
                const searchOptions = houseList.map(x => {
                    return {
                        category: x.houseId,
                        label: (
-                           <div style={{height:100}}>
-                               <Row>
-                                   <Col span={8}>
-                                       <Image src={x.images.length > 0 ? x.images[0].url : ''} alt={''} width={'100%'} referrerPolicy="no-referrer"/>
-                                   </Col>
-                                   <Col span={16}>
-                                       <Space direction={"vertical"}>
-                                           <Typography.Text>{`${x.resblockName} ${x.totalPrice}万 ${x.area}平`}</Typography.Text>
+                            <Link href={`/housedetail/${x.houseId}`}>
+                                <div>
+                                    <Row>
+                                        <Col span={8}>
+                                            <Image src={x.images.length > 0 ? x.images[0].url : ''} alt={''} width={'100%'} referrerPolicy="no-referrer"/>
+                                        </Col>
+                                        <Col span={16}>
+                                            <Space direction={"vertical"}>
+                                                <Typography.Text>{`${x.resblockName} ${x.totalPrice}万 ${x.area}平`}</Typography.Text>
+                                                <Typography.Text type={'secondary'}>{x.title}</Typography.Text>
 
-                                           <Typography.Text type={'secondary'}>{x.title}</Typography.Text>
+                                            </Space>
+                                        </Col>
+                                    </Row>
+                                    <div style={{height:1, backgroundColor:'#000000', opacity:0.1}}></div>
 
-                                       </Space>
-                                   </Col>
-                               </Row>
-                                <div style={{height:1, backgroundColor:'#000000', opacity:0.1}}></div>
+                                </div>
 
-                           </div>
+                            </Link>
+
                        )
                    }
                })
