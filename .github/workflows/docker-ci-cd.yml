@@ -25,3 +25,17 @@ jobs:
         run: docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:latest ./
      -  name: Push Image
         run: docker push ${{ secrets.DOCKERHUB_REPOSITORY }}:latest
+
+  deploy:
+      name: Deployment
+      runs-on: ubuntu-latest
+      steps:
+        - name: SSH Login & Deploy
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.SERVER_HOST }}
+            username: ${{ secrets.SERVER_USER }}
+            password: ${{ secrets.SERVER_PASSWORD }}
+            port: ${{ secrets.SERVER_SSH_PORT }}
+            script: |
+              cd lianjia_crawler_fe && sh docker_deploy.sh
