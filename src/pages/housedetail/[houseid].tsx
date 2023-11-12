@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router'
 import {queryHouseHistoryPrice, queryHouseInfoById} from "@/lianjia-service/LianjiaService";
 import {HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
-import {Button, Carousel, Descriptions, DescriptionsProps, Layout, Row, Table, Typography} from "antd";
+import {Button, Carousel, Descriptions, DescriptionsProps, FloatButton, Layout, Row, Table, Typography} from "antd";
 import { Image } from 'antd';
+import {ArrowLeftOutlined, SearchOutlined} from "@ant-design/icons";
 
 
 export async function getServerSideProps(context: any) {
@@ -68,6 +69,7 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
         },
     ];
 
+    const router = useRouter()
 
     return <Layout style={{backgroundColor:'#FFFFFF'}}>
         <Layout.Content>
@@ -101,6 +103,10 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
             </Row>
 
 
+            <FloatButton.Group>
+                <FloatButton onClick={() => router.push('/')}  icon={<SearchOutlined/>}/>
+                <FloatButton onClick={() => router.back()}  icon={<ArrowLeftOutlined/>}/>
+            </FloatButton.Group>
         </Layout.Content>
     </Layout>
 

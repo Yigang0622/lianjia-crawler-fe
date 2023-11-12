@@ -6,6 +6,8 @@ import {AutoComplete, Button, Col, Input, Layout, Row, SelectProps, Typography }
 import {queryHouseListByKeyWord} from "@/lianjia-service/LianjiaService";
 import {useState} from "react";
 import {LianjiaSearchBar} from "@/views/LianjiaSearchBar";
+import {useRouter} from "next/router";
+import {router} from "next/client";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,6 +21,8 @@ export const getServerSideProps =  (async () => {
 
 // @ts-ignore
 export default function Home() {
+
+    const router = useRouter()
 
 
     return (
@@ -38,7 +42,9 @@ export default function Home() {
                           <Typography.Title>Lianjia Search</Typography.Title>
                       </Row>
                       <Row>
-                          <LianjiaSearchBar></LianjiaSearchBar>
+                          <LianjiaSearchBar onSearch={(value:string) => {
+                              router.push(`/searchlist/${value}`)
+                          }}></LianjiaSearchBar>
                       </Row>
 
                   </Col>
