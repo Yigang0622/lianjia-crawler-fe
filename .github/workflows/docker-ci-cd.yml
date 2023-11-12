@@ -27,6 +27,7 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_REPOSITORY }}:latest
 
   deploy:
+      needs: [build]
       name: Deployment
       runs-on: ubuntu-latest
       steps:
