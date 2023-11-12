@@ -33,7 +33,7 @@ export default function Page({ houseList,keyword } : {houseList: HouseRecordDo[]
                             <Card bodyStyle={{padding:0}} style={{marginTop:10}}>
                                 <Row>
                                     <Col span={10} style={{backgroundColor:'#FFFFFF'}}>
-                                        <Image src={x.images.length > 0 ? x.images[0].url : ''} alt={''} width={'100%'} referrerPolicy="no-referrer"/>
+                                        <Image src={x.images.length > 0 ? x.images[0].url : ''} alt={''} width={'100%'} referrerPolicy="no-referrer" preview={false}/>
 
                                     </Col>
                                     <Col span={14} style={{padding: 10}}>
