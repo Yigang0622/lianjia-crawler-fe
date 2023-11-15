@@ -21,3 +21,24 @@ export interface HousePriceHistoryDo {
     dt: number,
     totalPrice: number
 }
+
+export interface HouseCompareRecordDo {
+    title: string,
+    houseId: string,
+    resblockName: string,
+    resblockId: string,
+    area: number,
+    totalPrice1: number,
+    totalPrice2: number,
+    areaPrice1: number,
+    areaPrice2:number,
+    areaPriceDiff: number,
+    priceDiff: number,
+    blockArea: string
+}
+
+export interface HouseCompareSummaryDo {
+    compareResult: HouseCompareRecordDo[],
+    newHouses: HouseRecordDo[],
+    soldHouse: HouseRecordDo[]
+}

@@ -1,5 +1,5 @@
 import {DataTypes, Model, Op, Sequelize} from "sequelize";
-import {HouseImageDo, HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
+import {HouseCompareRecordDo, HouseImageDo, HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
 import mysql2 from "mysql2"
 
 console.log('initializing sequelize ' + process.env.DB_HOST + ' ' + process.env.DB_PORT + ' ' + process.env.DB_USER + ' ' + process.env.DB_PASSWORD)
@@ -118,6 +118,48 @@ export const queryHouseInfoById = async (houseId: string): Promise<HouseRecordDo
 export const fetchLatestHouseLogDate = async (): Promise<number> => {
     const [results, metadata]= await sequelize.query('SELECT dt FROM house_log group by dt order by dt desc limit 1') as [any[], any]
     return results[0].dt
+}
+
+
+export const compareHouseLog = async (dt1: string, dt2: string) => {
+    const sql = `
+    SELECT A.title                       as \`title\`,
+       A.house_id                    as \`house_id\`,
+       A.resblock_name               as \`resblock_name\`,
+       A.resblock_id                 as \`resblock_id\`,
+       A.total_price                 as \`total_price_1\`,
+       B.total_price                 as \`total_price_2\`,
+       A.price                       as \`area_price_1\`,
+       B.price                       as \`area_price_2\`,
+       A.area                        as \`area\`,
+       B.price - A.price             as \`area_price_diff\`,
+       B.total_price - A.total_price as \`price_diff\`,
+       A.block_area                 as \`block_area\`
+    FROM lianjia.house_log A
+    left join lianjia.house_log B
+    on A.house_id = B.house_id
+    WHERE A.dt = ${dt1}
+      and B.dt = ${dt2}
+    ORDER by \`price_diff\`;
+    `
+    const [rows, metadata] = await sequelize.query(sql)
+    const result:HouseCompareRecordDo[] = rows.map((x: any) => {
+        return {
+            title: x.title,
+            houseId: x.house_id,
+            resblockName: x.resblock_name,
+            resblockId: x.resblock_id,
+            totalPrice1: Number(x.total_price_1),
+            totalPrice2: Number(x.total_price_2),
+            areaPrice1: Number(x.area_price_1),
+            areaPrice2: Number(x.area_price_2),
+            area: Number(x.area),
+            areaPriceDiff: Number(x.area_price_diff),
+            priceDiff: Number(x.price_diff),
+            blockArea: x.block_area
+        }
+    })
+    return result
 }
 
 const convertHouseDo = (x: LianjiaHouseRecord) => {
