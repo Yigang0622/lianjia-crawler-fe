@@ -6,6 +6,7 @@ import axios, {AxiosResponse} from "axios";
 import {HouseCompareRecordDo, HouseCompareSummaryDo} from "@/lianjia-service/typeDef";
 import {ColumnsType} from "antd/es/table";
 import {text} from "stream/consumers";
+import Link from "next/link";
 
 export default function Home() {
 
@@ -13,6 +14,7 @@ export default function Home() {
     const [dt2, setDt2] = useState(dayjs())
     const [areaBlocks, setAreaBlocks] = useState<string[]>([])
     const [resblockNames, setResblockNames] = useState<string[]>([])
+    const [loading, setLoading] = useState(false)
 
 
     const houseCompareColumns: ColumnsType<HouseCompareRecordDo> = [
@@ -22,7 +24,7 @@ export default function Home() {
             key: 'houseId',
             width: 100,
             render: (e) => {
-                return <a href={`https://m.lianjia.com/sh/ershoufang/${e}.html`} target={'_blank'}>{e}</a>
+                return <Link target={'_blank'} href={`/housedetail/${e}`}>{e}</Link>
             }
 
         },
@@ -30,7 +32,7 @@ export default function Home() {
             title: '地区',
             dataIndex: 'blockArea',
             key: 'blockArea',
-            width: 100,
+            width: 50,
             filters: areaBlocks.map(x => {
                 return {
                     text: x, value: x
@@ -127,8 +129,7 @@ export default function Home() {
     const [houseCompareResult, setHouseCompareResult] = useState<HouseCompareRecordDo[]>([])
 
     const requestData = async () => {
-        console.log(dt1.format('YYYYMMDD'))
-        console.log(dt2.format('YYYYMMDD'))
+        setLoading(true)
         const result:AxiosResponse<HouseCompareSummaryDo, any> = await axios.get('/api/compare', {
             params: {
                 dt1: dt1.format('YYYYMMDD'),
@@ -141,6 +142,7 @@ export default function Home() {
         setAreaBlocks(areaBlocks)
         setResblockNames(resblockNames)
         setHouseCompareResult(result.data.compareResult)
+        setLoading(false)
     }
 
     return (
@@ -153,7 +155,7 @@ export default function Home() {
                     <Button type={"primary"} onClick={requestData}>比较</Button>
                 </Space>
                 <Row>
-                    <Table dataSource={houseCompareResult} columns={houseCompareColumns} bordered={true} size={'small'}  scroll={{x:'100%'}}/>
+                    <Table dataSource={houseCompareResult} columns={houseCompareColumns} bordered={true} size={'small'}  scroll={{x:'100%'}} loading={loading}/>
                 </Row>
 
             </Layout.Content>
