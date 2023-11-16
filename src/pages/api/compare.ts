@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {compareHouseLog, queryHouseListByKeyWord} from "@/lianjia-service/LianjiaService";
+import {compareHouseLog, houseLogDiff, queryHouseListByKeyWord} from "@/lianjia-service/LianjiaService";
 import {HouseCompareSummaryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
 
 type Data = {
@@ -14,9 +14,12 @@ export default async function handler(
     const dt1 = (req.query.dt1 || '') as string
     const dt2 = (req.query.dt2 || '') as string
     const houseCompareRecordDos = await compareHouseLog(dt1, dt2)
+    const newHouses = await houseLogDiff(dt2, dt1)
+    const soldHouses = await houseLogDiff(dt1, dt2)
+
     res.status(200).json({
         compareResult:houseCompareRecordDos,
-        newHouses: [],
-        soldHouse: []
+        newHouses: newHouses,
+        soldHouse: soldHouses
     })
 }

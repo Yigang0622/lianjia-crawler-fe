@@ -1,5 +1,11 @@
 import {DataTypes, Model, Op, Sequelize} from "sequelize";
-import {HouseCompareRecordDo, HouseImageDo, HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
+import {
+    HouseCompareRecordDo,
+    HouseImageDo,
+    HousePriceHistoryDo,
+    HouseRecordDo,
+    SimpleHouseInfoDo
+} from "@/lianjia-service/typeDef";
 import mysql2 from "mysql2"
 
 console.log('initializing sequelize ' + process.env.DB_HOST + ' ' + process.env.DB_PORT + ' ' + process.env.DB_USER + ' ' + process.env.DB_PASSWORD)
@@ -11,7 +17,13 @@ const sequelize =  new Sequelize('lianjia',
         host: process.env.DB_HOST,
         dialect: 'mysql',
         port: parseInt(process.env.DB_PORT || '3306', 10),
-        dialectModule: mysql2
+        dialectModule: mysql2,
+        pool: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        }
     })
 
 
@@ -160,6 +172,36 @@ export const compareHouseLog = async (dt1: string, dt2: string) => {
         }
     })
     return result
+}
+
+export const houseLogDiff = async (inDt: string, notInDt: string): Promise<SimpleHouseInfoDo[]> => {
+    const sql = `
+       select
+            title,
+            total_price,
+            price,
+            area,
+            resblock_name,
+            house_id,
+            block_area
+            from house_log where dt = ${inDt}
+        and house_id not in (
+            select house_id from house_log where dt = ${notInDt}
+        )
+    `
+    const [rows, metadata] = await sequelize.query(sql)
+    return rows.map((x: any) => {
+        return {
+            title: x.title,
+            houseId: x.house_id,
+            resblockName: x.resblock_name,
+            totalPrice: Number(x.total_price),
+            areaPrice: Number(x.price),
+            area: Number(x.area),
+            blockArea: x.block_area
+        }
+    })
+
 }
 
 const convertHouseDo = (x: LianjiaHouseRecord) => {

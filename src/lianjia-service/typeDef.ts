@@ -39,6 +39,16 @@ export interface HouseCompareRecordDo {
 
 export interface HouseCompareSummaryDo {
     compareResult: HouseCompareRecordDo[],
-    newHouses: HouseRecordDo[],
-    soldHouse: HouseRecordDo[]
+    newHouses: SimpleHouseInfoDo[],
+    soldHouse: SimpleHouseInfoDo[]
+}
+
+export interface SimpleHouseInfoDo {
+    title: string,
+    totalPrice: number,
+    areaPrice: number,
+    area: number
+    blockArea: string,
+    resblockName: string,
+    houseId: string
 }

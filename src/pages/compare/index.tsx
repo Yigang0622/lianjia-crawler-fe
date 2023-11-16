@@ -1,12 +1,12 @@
-import {Button, DatePicker, Layout, Row, Space, Table, Typography} from "antd";
+import {Button, DatePicker, Layout, Row, Space, Table, TabPaneProps, Typography} from "antd";
 import React, {useState} from "react";
 import moment from "moment";
 import dayjs from "dayjs";
 import axios, {AxiosResponse} from "axios";
-import {HouseCompareRecordDo, HouseCompareSummaryDo} from "@/lianjia-service/typeDef";
+import {HouseCompareRecordDo, HouseCompareSummaryDo, SimpleHouseInfoDo} from "@/lianjia-service/typeDef";
 import {ColumnsType} from "antd/es/table";
-import {text} from "stream/consumers";
 import Link from "next/link";
+import { Tabs } from 'antd';
 
 export default function Home() {
 
@@ -16,6 +16,15 @@ export default function Home() {
     const [resblockNames, setResblockNames] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
 
+    const [areaBlocksSold, setAreaBlocksSold] = useState<string[]>([])
+    const [resblockNamesSold, setResblockNamesSold] = useState<string[]>([])
+    const [areaBlocksNew, setAreaBlocksNew] = useState<string[]>([])
+    const [resblockNamesNew, setResblockNamesNew] = useState<string[]>([])
+
+
+    const [houseCompareResult, setHouseCompareResult] = useState<HouseCompareRecordDo[]>([])
+    const [newHouses, setNewHouses] = useState<SimpleHouseInfoDo[]>()
+    const [soldHouses, setSoldHouses] = useState<SimpleHouseInfoDo[]>()
 
     const houseCompareColumns: ColumnsType<HouseCompareRecordDo> = [
         {
@@ -125,8 +134,158 @@ export default function Home() {
             }
         },
     ];
+    const soldHouseColumns: ColumnsType<SimpleHouseInfoDo> = [
+        {
+            title: '房源编号',
+            dataIndex: 'houseId',
+            key: 'houseId',
+            width: 100,
+            render: (e) => {
+                return <Link target={'_blank'} href={`/housedetail/${e}`}>{e}</Link>
+            }
 
-    const [houseCompareResult, setHouseCompareResult] = useState<HouseCompareRecordDo[]>([])
+        },
+        {
+            title: '地区',
+            dataIndex: 'blockArea',
+            key: 'blockArea',
+            width: 50,
+            filters: areaBlocksSold.map(x => {
+                return {
+                    text: x, value: x
+                }
+            }),
+            filterSearch: true,
+            onFilter: (value, record) => record.blockArea.startsWith(`${value}`)
+
+        },
+        {
+            title: '小区',
+            dataIndex: 'resblockName',
+            key: 'resblockName',
+            width: 100,
+            filters: resblockNamesSold.map(x => {
+                return {
+                    text: x, value: x
+                }
+            }),
+            filterSearch: true,
+            onFilter: (value, record) => record.resblockName.startsWith(`${value}`)
+        },
+        {
+            title: '面积',
+            dataIndex: 'area',
+            width: 100,
+            key: 'area',
+            sorter: (a, b) => a.area - b.area,
+
+        },
+        {
+            title: `平米价格`,
+            dataIndex: 'areaPrice',
+            key: 'areaPrice',
+            width: 100,
+            sorter: (a, b) => a.areaPrice - b.areaPrice,
+
+
+        },
+        {
+            title: `总价`,
+            dataIndex: 'totalPrice',
+            key: 'totalPrice',
+            width: 100,
+            sorter: (a, b) => a.totalPrice - b.totalPrice,
+
+
+        },
+        {
+            title: '标题',
+            dataIndex: 'title',
+            key: 'title',
+            width: 100,
+            fixed: 'left',
+            render: (e) => {
+                return <p style={{ maxHeight:5, padding:0, margin:0}}>{e}</p>
+            }
+        }
+    ];
+
+    const newHouseColumns: ColumnsType<SimpleHouseInfoDo> = [
+        {
+            title: '房源编号',
+            dataIndex: 'houseId',
+            key: 'houseId',
+            width: 100,
+            render: (e) => {
+                return <Link target={'_blank'} href={`/housedetail/${e}`}>{e}</Link>
+            }
+
+        },
+        {
+            title: '地区',
+            dataIndex: 'blockArea',
+            key: 'blockArea',
+            width: 50,
+            filters: areaBlocksNew.map(x => {
+                return {
+                    text: x, value: x
+                }
+            }),
+            filterSearch: true,
+            onFilter: (value, record) => record.blockArea.startsWith(`${value}`)
+
+        },
+        {
+            title: '小区',
+            dataIndex: 'resblockName',
+            key: 'resblockName',
+            width: 100,
+            filters: resblockNamesNew.map(x => {
+                return {
+                    text: x, value: x
+                }
+            }),
+            filterSearch: true,
+            onFilter: (value, record) => record.resblockName.startsWith(`${value}`)
+        },
+        {
+            title: '面积',
+            dataIndex: 'area',
+            width: 100,
+            key: 'area',
+            sorter: (a, b) => a.area - b.area,
+
+        },
+        {
+            title: `平米价格`,
+            dataIndex: 'areaPrice',
+            key: 'areaPrice',
+            width: 100,
+            sorter: (a, b) => a.areaPrice - b.areaPrice,
+
+
+        },
+        {
+            title: `总价`,
+            dataIndex: 'totalPrice',
+            key: 'totalPrice',
+            width: 100,
+            sorter: (a, b) => a.totalPrice - b.totalPrice,
+
+
+        },
+        {
+            title: '标题',
+            dataIndex: 'title',
+            key: 'title',
+            width: 100,
+            fixed: 'left',
+            render: (e) => {
+                return <p style={{ maxHeight:5, padding:0, margin:0}}>{e}</p>
+            }
+        }
+    ];
+
 
     const requestData = async () => {
         setLoading(true)
@@ -139,11 +298,48 @@ export default function Home() {
         console.log(result.data.compareResult[0])
         const areaBlocks = Array.from(new Set(result.data.compareResult.map(x => x.blockArea)))
         const resblockNames = Array.from(new Set(result.data.compareResult.map(x => x.resblockName)))
+        const areaBlocksNew = Array.from(new Set(result.data.newHouses.map(x => x.blockArea)))
+        const resblockNamesNew = Array.from(new Set(result.data.newHouses.map(x => x.resblockName)))
+        const areaBlocksSold = Array.from(new Set(result.data.soldHouse.map(x => x.blockArea)))
+        const resblockNamesSold = Array.from(new Set(result.data.soldHouse.map(x => x.resblockName)))
+
+        setAreaBlocksSold(areaBlocksSold)
+        setResblockNamesSold(resblockNamesSold)
+        setAreaBlocksNew(areaBlocksNew)
+        setResblockNamesNew(resblockNamesNew)
         setAreaBlocks(areaBlocks)
         setResblockNames(resblockNames)
         setHouseCompareResult(result.data.compareResult)
+        setNewHouses(result.data.newHouses)
+        setSoldHouses(result.data.soldHouse)
         setLoading(false)
     }
+
+    const tabs= [
+        {
+            key: '1',
+            label: '价格比较',
+            children:
+                <Row>
+                    <Table dataSource={houseCompareResult} columns={houseCompareColumns} bordered={true} size={'small'}  scroll={{x:'100%'}} loading={loading}/>
+                </Row>
+        },
+        {
+            key: '2',
+            label: `${dt1.format('MM-DD')}后新上架`,
+            children:
+                <Row>
+                    <Table dataSource={newHouses} columns={newHouseColumns} bordered={true} size={'small'}  scroll={{x:'100%'}} loading={loading}/>
+                </Row>
+        },
+        {
+            key: '3',
+            label: `${dt1.format('MM-DD')}后卖出`,
+            children: <Row>
+                        <Table dataSource={soldHouses} columns={soldHouseColumns} bordered={true} size={'small'}  scroll={{x:'100%'}} loading={loading}/>
+                    </Row>
+        },
+    ];
 
     return (
         <Layout>
@@ -154,10 +350,8 @@ export default function Home() {
                     <DatePicker onChange={(date) => setDt2(date || dayjs())} defaultValue={dt2}/>
                     <Button type={"primary"} onClick={requestData}>比较</Button>
                 </Space>
-                <Row>
-                    <Table dataSource={houseCompareResult} columns={houseCompareColumns} bordered={true} size={'small'}  scroll={{x:'100%'}} loading={loading}/>
-                </Row>
 
+                <Tabs defaultActiveKey="1" items={tabs} onChange={() => {}} centered/>
             </Layout.Content>
         </Layout>
     )
