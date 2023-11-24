@@ -41,7 +41,7 @@ export default function Home() {
             title: '地区',
             dataIndex: 'blockArea',
             key: 'blockArea',
-            width: 50,
+            width: 100,
             filters: areaBlocks.map(x => {
                 return {
                     text: x, value: x
@@ -149,7 +149,7 @@ export default function Home() {
             title: '地区',
             dataIndex: 'blockArea',
             key: 'blockArea',
-            width: 50,
+            width: 100,
             filters: areaBlocksSold.map(x => {
                 return {
                     text: x, value: x
@@ -225,7 +225,7 @@ export default function Home() {
             title: '地区',
             dataIndex: 'blockArea',
             key: 'blockArea',
-            width: 50,
+            width: 100,
             filters: areaBlocksNew.map(x => {
                 return {
                     text: x, value: x
@@ -344,7 +344,6 @@ export default function Home() {
     return (
         <Layout>
             <Layout.Content>
-                <Typography.Title>价格比较</Typography.Title>
                 <Space>
                     <DatePicker onChange={(date) => setDt1(date || dayjs())} defaultValue={dt1}/>
                     <DatePicker onChange={(date) => setDt2(date || dayjs())} defaultValue={dt2}/>

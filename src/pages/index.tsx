@@ -2,12 +2,13 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
-import {AutoComplete, Button, Col, Input, Layout, Row, SelectProps, Typography } from "antd";
+import {AutoComplete, Button, Col, FloatButton, Input, Layout, Row, SelectProps, Typography} from "antd";
 import {queryHouseListByKeyWord} from "@/lianjia-service/LianjiaService";
 import {useState} from "react";
 import {LianjiaSearchBar} from "@/views/LianjiaSearchBar";
 import {useRouter} from "next/router";
 import {router} from "next/client";
+import {CalendarOutlined} from "@ant-design/icons";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -48,6 +49,10 @@ export default function Home() {
                       </Row>
 
                   </Col>
+
+                  <FloatButton
+                      icon={<CalendarOutlined />}
+                      onClick={() => {router.push('/compare')}}/>
               </Layout.Content>
           </Layout>
 
