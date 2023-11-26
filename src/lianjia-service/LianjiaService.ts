@@ -3,7 +3,7 @@ import {
     HouseCompareRecordDo,
     HouseImageDo,
     HousePriceHistoryDo,
-    HouseRecordDo,
+    HouseRecordDo, HouseSnapshotDo,
     SimpleHouseInfoDo
 } from "@/lianjia-service/typeDef";
 import mysql2 from "mysql2"
@@ -132,6 +132,26 @@ export const fetchLatestHouseLogDate = async (): Promise<number> => {
     return results[0].dt
 }
 
+export const fetchHouseSnapshot = async (snapshotId: string):Promise<HouseSnapshotDo> => {
+
+    const [rows, _] = await sequelize.query(`SELECT dt, house_id, snapshot FROM house_snapshot A WHERE A.snapshot_identifier = '${snapshotId}'`)
+    const result: HouseSnapshotDo[] = rows.map((x: any) => {
+        return {
+            dt: x.dt,
+            houseId: x.house_id,
+            snapshot: x.snapshot
+        }
+    })
+    if (result.length > 0) {
+        return result[0]
+    } else {
+        return {
+            dt: 0,
+            houseId: '',
+            snapshot: ''
+        }
+    }
+}
 
 export const compareHouseLog = async (dt1: string, dt2: string) => {
     const sql = `

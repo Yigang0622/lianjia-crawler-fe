@@ -17,6 +17,7 @@ import { Image } from 'antd';
 import {ArrowLeftOutlined, SearchOutlined} from "@ant-design/icons";
 import React from "react";
 import {Meta} from "antd/es/list/Item";
+import Link from "next/link";
 
 
 export async function getServerSideProps(context: any) {
@@ -78,7 +79,10 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
             title: '日期',
             dataIndex: 'dt',
             key: 'dt',
-            width: 200
+            width: 200,
+            render: (e:any) => {
+                return <Link target={'_blank'} href={`/snapshot/${houseInfo.houseId}_${e}`}>{e}</Link>
+            }
         },
         {
             title: '售价',

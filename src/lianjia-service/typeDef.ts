@@ -52,3 +52,9 @@ export interface SimpleHouseInfoDo {
     resblockName: string,
     houseId: string
 }
+
+export interface HouseSnapshotDo {
+    dt: number,
+    houseId: string,
+    snapshot: string
+}
