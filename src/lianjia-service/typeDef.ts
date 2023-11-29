@@ -56,5 +56,7 @@ export interface SimpleHouseInfoDo {
 export interface HouseSnapshotDo {
     dt: number,
     houseId: string,
-    snapshot: string
+    snapshot: string,
+    patch_ref: string,
+    patch_content: string
 }

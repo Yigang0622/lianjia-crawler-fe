@@ -134,12 +134,14 @@ export const fetchLatestHouseLogDate = async (): Promise<number> => {
 
 export const fetchHouseSnapshot = async (snapshotId: string):Promise<HouseSnapshotDo> => {
 
-    const [rows, _] = await sequelize.query(`SELECT dt, house_id, snapshot FROM house_snapshot A WHERE A.snapshot_identifier = '${snapshotId}'`)
+    const [rows, _] = await sequelize.query(`SELECT dt, house_id, snapshot, patch_ref, patch_content FROM house_snapshot A WHERE A.snapshot_identifier = '${snapshotId}'`)
     const result: HouseSnapshotDo[] = rows.map((x: any) => {
         return {
             dt: x.dt,
             houseId: x.house_id,
-            snapshot: x.snapshot
+            snapshot: x.snapshot,
+            patch_ref: x.patch_ref,
+            patch_content: x.patch_content ? x.patch_content : ''
         }
     })
     if (result.length > 0) {
@@ -148,7 +150,9 @@ export const fetchHouseSnapshot = async (snapshotId: string):Promise<HouseSnapsh
         return {
             dt: 0,
             houseId: '',
-            snapshot: ''
+            snapshot: '',
+            patch_content: '',
+            patch_ref: ''
         }
     }
 }
