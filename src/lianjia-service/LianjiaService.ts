@@ -228,6 +228,43 @@ export const houseLogDiff = async (inDt: string, notInDt: string): Promise<Simpl
 
 }
 
+export const addHouseToCollection = async (params: {
+    sid: string,
+    sub: string,
+    houseId: string
+}): Promise<boolean> => {
+    const time = Date.now()
+    const sql = `
+        REPLACE INTO user_house_collection(sid,sub,house_id,time) VALUES (\'${params.sid}\', \'${params.sub}\', \'${params.houseId}\', ${time}); 
+    `
+    await sequelize.query(sql)
+    return true
+}
+
+export const removeHouseFromCollection = async (params: {
+    sid: string,
+    sub: string,
+    houseId: string
+}): Promise<boolean> => {
+    const sql = `
+    DELETE from user_house_collection WHERE sid = \'${params.sid}\' and sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
+    `
+    await sequelize.query(sql)
+    return true
+}
+
+export const checkHouseCollectionStatus = async (params: {
+    sid: string,
+    sub: string,
+    houseId: string
+}): Promise<boolean> => {
+    const sql = `
+    SELECT 1 from user_house_collection WHERE sid = \'${params.sid}\' and sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
+    `
+    const [rows, _] = await sequelize.query(sql)
+    return rows.length > 0
+}
+
 const convertHouseDo = (x: LianjiaHouseRecord) => {
     return {
         dt: x.dataValues.dt,

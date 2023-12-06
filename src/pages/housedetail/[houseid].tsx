@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import {queryHouseHistoryPrice, queryHouseInfoById} from "@/lianjia-service/LianjiaService";
+import {checkHouseCollectionStatus, queryHouseHistoryPrice, queryHouseInfoById} from "@/lianjia-service/LianjiaService";
 import {HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
 import {
     Button, Card,
@@ -14,23 +14,48 @@ import {
     Typography
 } from "antd";
 import { Image } from 'antd';
-import {ArrowLeftOutlined, SearchOutlined} from "@ant-design/icons";
-import React from "react";
-import {Meta} from "antd/es/list/Item";
+import {ArrowLeftOutlined, SearchOutlined, UserOutlined} from "@ant-design/icons";
+import React, {useEffect} from "react";
 import Link from "next/link";
-
+import axios from "axios";
+import {getSession} from "@auth0/nextjs-auth0";
 
 export async function getServerSideProps(context: any) {
-    const houseid = context.query.houseid || ''
-    const houseInfo  = await queryHouseInfoById(houseid)
-    const priceHistory = await queryHouseHistoryPrice(houseid)
-    // Pass data to the page via props
+    const houseId = context.query.houseid || ''
+    const houseInfo  = await queryHouseInfoById(houseId)
+    const priceHistory = await queryHouseHistoryPrice(houseId)
+
+    const session = await getSession(context.req, context.res)
+    if (session && session.user) {
+        const sub = session.user.sub || ''
+        const sid = session.user.sid || ''
+        const collected = await checkHouseCollectionStatus({
+            sid, sub, houseId
+        })
+        console.log(collected + '<--- collected')
+    }
     return { props: { houseInfo, priceHistory } }
 }
 
 
+
+
 export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecordDo, priceHistory: HousePriceHistoryDo[]}) {
 
+
+
+    // useEffect(() => {
+    //     axios.get('/api/collection/update', {
+    //         params: {
+    //             houseId: houseInfo.houseId,
+    //             operation: '1'
+    //         }
+    //     }).then((x) => {
+    //
+    //     }).catch(x => {
+    //
+    //     })
+    // })
 
     const contentStyle: React.CSSProperties = {
         margin: 0,
@@ -135,6 +160,7 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
 
 
             <FloatButton.Group>
+                <FloatButton onClick={() => router.push('/profile')}  icon={<UserOutlined/>}/>
                 <FloatButton onClick={() => router.push('/')}  icon={<SearchOutlined/>}/>
                 <FloatButton onClick={() => router.back()}  icon={<ArrowLeftOutlined/>}/>
             </FloatButton.Group>

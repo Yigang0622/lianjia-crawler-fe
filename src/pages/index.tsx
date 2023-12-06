@@ -4,11 +4,12 @@ import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import {AutoComplete, Button, Col, FloatButton, Input, Layout, Row, SelectProps, Typography} from "antd";
 import {queryHouseListByKeyWord} from "@/lianjia-service/LianjiaService";
-import {useState} from "react";
+import React, {useState} from "react";
 import {LianjiaSearchBar} from "@/views/LianjiaSearchBar";
 import {useRouter} from "next/router";
 import {router} from "next/client";
-import {CalendarOutlined} from "@ant-design/icons";
+import {CalendarOutlined, UserOutlined} from "@ant-design/icons";
+import {useUser} from "@auth0/nextjs-auth0/client";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,7 +25,7 @@ export const getServerSideProps =  (async () => {
 export default function Home() {
 
     const router = useRouter()
-
+    const { user, error, isLoading } = useUser();
 
     return (
     <>
@@ -37,7 +38,6 @@ export default function Home() {
       <main>
           <Layout style={{backgroundColor:'#FFFFFF'}}>
               <Layout.Content>
-
                   <Col xs={{span:24, offset:0}} sm={{span:24, offset:0}} md={{span:18, offset:3}} lg={{span:10, offset:7}} xl={{span:8, offset:8}} >
                       <Row style={{marginTop: '50%', flex: 1, justifyContent:'center'}}>
                           <Typography.Title>Lianjia Search</Typography.Title>
@@ -49,10 +49,12 @@ export default function Home() {
                       </Row>
 
                   </Col>
-
-                  <FloatButton
-                      icon={<CalendarOutlined />}
-                      onClick={() => {router.push('/compare')}}/>
+                  <FloatButton.Group>
+                      <FloatButton onClick={() => router.push('/profile')}  icon={<UserOutlined/>}/>
+                      <FloatButton
+                          icon={<CalendarOutlined />}
+                          onClick={() => {router.push('/compare')}}/>
+                  </FloatButton.Group>
               </Layout.Content>
           </Layout>
 
