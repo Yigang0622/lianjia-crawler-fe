@@ -144,6 +144,11 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
                     window.open(`https://m.lianjia.com/sh/ershoufang/${houseInfo.houseId}.html`, '_blank')
                 }}>跳转链家</Button>
 
+
+                <Button style={{paddingLeft:0}} type={'link'} onClick={() => {
+                    window.open(`https://m.lianjia.com/sh/ershoufang/${houseInfo.houseId}.html`, '_blank')
+                }}>收藏</Button>
+
                 <Row style={{paddingTop:20}}>
                     <Divider>基础信息</Divider>
                     <Descriptions bordered items={items} style={{flex:1}}/>
