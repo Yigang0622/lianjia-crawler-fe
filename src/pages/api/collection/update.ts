@@ -34,7 +34,7 @@ export default async function handler(
 
         } else if (operation === '2') {
             success = await removeHouseFromCollection({
-                sid, sub, houseId
+                sub, houseId
             })
         } else {
             success = false
