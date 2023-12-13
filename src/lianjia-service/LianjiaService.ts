@@ -98,6 +98,20 @@ export const queryHouseListByKeyWord = async (word: string, limit: number): Prom
     })
 }
 
+export const queryHouseRecordsByHouseIds = async (houseIds: string[]): Promise<HouseRecordDo[]> => {
+    const queryResult: LianjiaHouseRecord[] = await LianjiaHouseRecord.findAll({
+        where: {
+            house_id: { [Op.in]: houseIds }
+        },
+        order: [
+            ['dt', 'ASC']
+        ]
+    })
+    return queryResult.map((x) => {
+        return convertHouseDo(x)
+    })
+}
+
 export const queryHouseHistoryPrice = async (houseId: string): Promise<HousePriceHistoryDo[]> => {
     const queryResult: LianjiaHouseRecord[] = await LianjiaHouseRecord.findAll({
         where: {
@@ -226,6 +240,53 @@ export const houseLogDiff = async (inDt: string, notInDt: string): Promise<Simpl
         }
     })
 
+}
+
+
+// collection
+export const addHouseToCollection = async (params: {
+    sid: string,
+    sub: string,
+    houseId: string
+}): Promise<boolean> => {
+    const time = Date.now()
+    const sql = `
+        REPLACE INTO user_house_collection(sid,sub,house_id,time) VALUES (\'${params.sid}\', \'${params.sub}\', \'${params.houseId}\', ${time}); 
+    `
+    await sequelize.query(sql)
+    return true
+}
+
+export const removeHouseFromCollection = async (params: {
+    sub: string,
+    houseId: string
+}): Promise<boolean> => {
+    const sql = `
+    DELETE from user_house_collection WHERE sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
+    `
+    await sequelize.query(sql)
+    return true
+}
+
+export const checkHouseCollectionStatus = async (params: {
+    sub: string
+    houseId: string
+}): Promise<boolean> => {
+    const sql = `
+    SELECT 1 from user_house_collection WHERE sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
+    `
+    const [rows, _] = await sequelize.query(sql)
+    return rows.length > 0
+}
+
+export const queryHouseCollectionList = async (params: {
+    sub: string
+}): Promise<string[]> => {
+    const sql = `
+    SELECT house_id from user_house_collection WHERE sub = \'${params.sub}\'
+    `
+    const [rows, _] = await sequelize.query(sql)
+    return rows.map((x: any) => x.house_id)
 }
 
 const convertHouseDo = (x: LianjiaHouseRecord) => {

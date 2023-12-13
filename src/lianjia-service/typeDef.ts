@@ -60,3 +60,13 @@ export interface HouseSnapshotDo {
     patch_ref: string,
     patch_content: string
 }
+
+export interface PriceHistoryDo {
+    dt: number,
+    price: number
+}
+export interface UserHouseCollectionDo {
+    houseId: string,
+    houseInfo: HouseRecordDo,
+    priceHistory: PriceHistoryDo[]
+}

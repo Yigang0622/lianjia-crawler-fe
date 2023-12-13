@@ -1,5 +1,10 @@
 import { useRouter } from 'next/router'
-import {queryHouseHistoryPrice, queryHouseInfoById} from "@/lianjia-service/LianjiaService";
+import {
+    addHouseToCollection,
+    checkHouseCollectionStatus,
+    queryHouseHistoryPrice,
+    queryHouseInfoById
+} from "@/lianjia-service/LianjiaService";
 import {HousePriceHistoryDo, HouseRecordDo} from "@/lianjia-service/typeDef";
 import {
     Button, Card,
@@ -8,29 +13,69 @@ import {
     DescriptionsProps,
     Divider,
     FloatButton,
-    Layout,
+    Layout, message,
     Row,
     Table,
     Typography
 } from "antd";
 import { Image } from 'antd';
-import {ArrowLeftOutlined, SearchOutlined} from "@ant-design/icons";
-import React from "react";
-import {Meta} from "antd/es/list/Item";
+import {ArrowLeftOutlined, SearchOutlined, UserOutlined} from "@ant-design/icons";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
-
+import axios from "axios";
+import {getSession} from "@auth0/nextjs-auth0";
+import {useUser} from "@auth0/nextjs-auth0/client";
 
 export async function getServerSideProps(context: any) {
-    const houseid = context.query.houseid || ''
-    const houseInfo  = await queryHouseInfoById(houseid)
-    const priceHistory = await queryHouseHistoryPrice(houseid)
-    // Pass data to the page via props
-    return { props: { houseInfo, priceHistory } }
+    const houseId = context.query.houseid || ''
+    const houseInfo  = await queryHouseInfoById(houseId)
+    const priceHistory = await queryHouseHistoryPrice(houseId)
+
+    let collected = false
+    const session = await getSession(context.req, context.res)
+    if (session && session.user) {
+        const sub = session.user.sub || ''
+         collected = await checkHouseCollectionStatus({
+            sub, houseId
+        })
+        console.log(collected + '<--- collected')
+    }
+    return { props: { houseInfo, priceHistory, collected  } }
 }
 
 
-export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecordDo, priceHistory: HousePriceHistoryDo[]}) {
 
+
+export default function Page({ houseInfo,priceHistory,collected } : {houseInfo: HouseRecordDo, priceHistory: HousePriceHistoryDo[],collected:boolean}) {
+
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const [houseCollected, setHouseCollected] = useState<boolean>(collected)
+    const [updateCollectionRequesting, setUpdateCollectionRequesting] = useState(false)
+    const { user, error, isLoading } = useUser();
+
+    const updateCollection = (addOrRemove: boolean) => {
+        setUpdateCollectionRequesting(true)
+        axios.get('/api/collection/update', {
+            params: {
+                houseId: houseInfo.houseId,
+                operation: addOrRemove ? '1' : '2'
+            }
+        }).then((x) => {
+            setUpdateCollectionRequesting(false)
+            setHouseCollected(!houseCollected)
+            messageApi.open({
+                type: 'success',
+                content: addOrRemove ? '收藏成功' : '取消收藏成功',
+            });
+        }).catch(x => {
+            setUpdateCollectionRequesting(false)
+            messageApi.open({
+                type: 'error',
+                content: JSON.stringify(x),
+            });
+        })
+    }
 
     const contentStyle: React.CSSProperties = {
         margin: 0,
@@ -94,6 +139,7 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
     const router = useRouter()
 
     return <Layout style={{}}>
+        {contextHolder}
         <Layout.Content style={{backgroundColor:'#FFFFFF', paddingLeft: 10, paddingRight: 10}}>
 
 
@@ -119,6 +165,18 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
                     window.open(`https://m.lianjia.com/sh/ershoufang/${houseInfo.houseId}.html`, '_blank')
                 }}>跳转链家</Button>
 
+
+                <Button loading={updateCollectionRequesting} style={{paddingLeft:0}} type={'link'} onClick={() => {
+
+                    if (!user) {
+                        router.push(`/api/auth/login?returnTo=/housedetail/${houseInfo.houseId}`)
+                        return
+                    }
+
+                    updateCollection(!houseCollected)
+
+                }}> {houseCollected ? '取消收藏' : '收藏'} </Button>
+
                 <Row style={{paddingTop:20}}>
                     <Divider>基础信息</Divider>
                     <Descriptions bordered items={items} style={{flex:1}}/>
@@ -135,6 +193,7 @@ export default function Page({ houseInfo,priceHistory } : {houseInfo: HouseRecor
 
 
             <FloatButton.Group>
+                <FloatButton onClick={() => router.push('/profile')}  icon={<UserOutlined/>}/>
                 <FloatButton onClick={() => router.push('/')}  icon={<SearchOutlined/>}/>
                 <FloatButton onClick={() => router.back()}  icon={<ArrowLeftOutlined/>}/>
             </FloatButton.Group>
