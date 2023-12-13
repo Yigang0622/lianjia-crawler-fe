@@ -258,24 +258,22 @@ export const addHouseToCollection = async (params: {
 }
 
 export const removeHouseFromCollection = async (params: {
-    sid: string,
     sub: string,
     houseId: string
 }): Promise<boolean> => {
     const sql = `
-    DELETE from user_house_collection WHERE sid = \'${params.sid}\' and sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
+    DELETE from user_house_collection WHERE sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
     `
     await sequelize.query(sql)
     return true
 }
 
 export const checkHouseCollectionStatus = async (params: {
-    sid: string,
-    sub: string,
+    sub: string
     houseId: string
 }): Promise<boolean> => {
     const sql = `
-    SELECT 1 from user_house_collection WHERE sid = \'${params.sid}\' and sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
+    SELECT 1 from user_house_collection WHERE sub = \'${params.sub}\' and house_id =  \'${params.houseId}\'
     `
     const [rows, _] = await sequelize.query(sql)
     return rows.length > 0

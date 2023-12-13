@@ -1,13 +1,13 @@
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import {useUser} from "@auth0/nextjs-auth0/client";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {Card, Col, Image, Input, Row, Skeleton, Space, Tag, Typography} from "antd";
+import {Button, Card, Col, FloatButton, Image, Input, Row, Skeleton, Space, Tag, Typography} from "antd";
 import Link from "next/link";
-import {HouseRecordDo, PriceHistoryDo, UserHouseCollectionDo} from "@/lianjia-service/typeDef";
+import {UserHouseCollectionDo} from "@/lianjia-service/typeDef";
 import {Line} from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from 'chart.js';
-import { Chart } from 'react-chartjs-2'
+import {SearchOutlined} from "@ant-design/icons";
 ChartJS.register(...registerables);
 
 
@@ -39,8 +39,8 @@ export default function Home() {
     })
 
     return  <Col xs={{span:24, offset:0}} sm={{span:24, offset:0}} md={{span:18, offset:3}} lg={{span:10, offset:7}} xl={{span:8, offset:8}} >
-        {/*<Input.Search size="large" placeholder="房源Id/小区名字/房源标题..." onSearch={onSearchClick} enterButton />*/}
         <Typography.Title level={4}>Welcome {user?.nickname}</Typography.Title>
+        <Button style={{paddingLeft:0}} type={"link"} href={'/api/auth/logout'}>logout</Button>
 
         {
             loading ?  <Skeleton active/> :
@@ -94,5 +94,9 @@ export default function Home() {
                 })
 
         }
+
+        <FloatButton.Group>
+            <FloatButton href={"/"}  icon={<SearchOutlined/>}/>
+        </FloatButton.Group>
     </Col>
 }
