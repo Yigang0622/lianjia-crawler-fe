@@ -162,10 +162,17 @@ export default function Page({ houseInfo,priceHistory,collected } : {houseInfo: 
                 <Typography.Title level={5}>{houseInfo.title}</Typography.Title>
 
                 <Button style={{paddingLeft:0}} type={'link'} onClick={() => {
+                    window.open(`lianjia://ershou/detail?houseCode=${houseInfo.houseId}`, '_blank')
+                }}>跳转链家App</Button>
+
+                 <Button style={{paddingLeft:0}} type={'link'} onClick={() => {
+                    window.open(`https://sh.lianjia.com/ershoufang/${houseInfo.houseId}.html`, '_blank')
+                }}>跳转链家PC</Button>
+
+                 <Button style={{paddingLeft:0}} type={'link'} onClick={() => {
                     window.open(`https://m.lianjia.com/sh/ershoufang/${houseInfo.houseId}.html`, '_blank')
-                }}>跳转链家</Button>
-
-
+                }}>跳转链家m站</Button>
+                
                 <Button loading={updateCollectionRequesting} style={{paddingLeft:0}} type={'link'} onClick={() => {
 
                     if (!user) {
